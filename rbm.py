@@ -66,7 +66,7 @@ class RestrictedBoltzmannMachine():
         return
 
         
-    def cd1(self,visible_trainset, n_iterations=10000):
+    def cd1(self,visible_trainset, n_iterations=10000,bool_plot=False):
         
         """Contrastive Divergence with k=1 full alternating Gibbs sampling
 
@@ -81,7 +81,7 @@ class RestrictedBoltzmannMachine():
 
         
 
-
+        Recon_los=[]
 
         for it in range(n_iterations):
 
@@ -108,15 +108,25 @@ class RestrictedBoltzmannMachine():
             
             if it % self.rf["period"] == 0 and self.is_bottom:
                 
-                viz_rf(weights=self.weight_vh[:,self.rf["ids"]].reshape((self.image_size[0],self.image_size[1],-1)), it=it, grid=self.rf["grid"])
+                viz_rf(weights=self.weight_vh[:,self.rf["ids"]].reshape((self.image_size[0],self.image_size[1],-1)), it=it, grid=self.rf["grid"],bool_plot=bool_plot)
 
             # print progress
             
             if it % self.print_period == 0 :
 
                 print ("iteration=%7d recon_loss=%4.4f"%(it, np.linalg.norm(v0 - v1)))
+                Recon_los.append(np.linalg.norm(v0 - v1))
+            
+        if bool_plot:
+            plt.plot(Recon_los)
+            plt.title("Reconstrcution loss")
+            plt.xlabel("period")
+            plt.ylabel("Reconstruction Loss")
+            plt.show()
+
+                
         
-        return
+        return 
     
 
     def update_params(self,v_0,h_0,v_k,h_k):
