@@ -99,8 +99,13 @@ class RestrictedBoltzmannMachine():
             _,h0=self.get_h_given_v(v0)
             pv1,v1=self.get_v_given_h(h0)
             ph1,h1=self.get_h_given_v(pv1)
+            
             self.update_params(v0,h0,pv1,ph1)
 
+            
+
+            if i==0:
+                Recon_los.append(np.linalg.norm(v0 - v1))
 
            
 
@@ -115,18 +120,17 @@ class RestrictedBoltzmannMachine():
             if it % self.print_period == 0 :
 
                 print ("iteration=%7d recon_loss=%4.4f"%(it, np.linalg.norm(v0 - v1)))
-                Recon_los.append(np.linalg.norm(v0 - v1))
             
         if bool_plot:
             plt.plot(Recon_los)
             plt.title("Reconstrcution loss")
-            plt.xlabel("period")
+            plt.xlabel("Epochs")
             plt.ylabel("Reconstruction Loss")
             plt.show()
 
                 
         
-        return 
+        return Recon_los
     
 
     def update_params(self,v_0,h_0,v_k,h_k):
